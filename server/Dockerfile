@@ -10,8 +10,7 @@ RUN pip install -r requirements.txt
 
 COPY app /code/app
 
-WORKDIR /code/app
 ENV PORT 8000
 EXPOSE $PORT
-CMD gunicorn --workers 1 --threads 8 --bind :$PORT app:app
+CMD gunicorn --workers 1 --threads 8 --bind :$PORT app.app:app
 

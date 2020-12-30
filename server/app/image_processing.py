@@ -48,7 +48,7 @@ def einkize_image(im: Image) -> bytes:
 					'-define',
 					'dither:diffusion-amount=85%',
 					'-remap',
-					'./eink-4level-palette.png',
+					'./app/eink-4level-palette.png',
 					f'BMP3:{out_file.name}',
 				],
 				check=True,

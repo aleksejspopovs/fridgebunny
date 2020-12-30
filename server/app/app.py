@@ -5,8 +5,8 @@ import requests
 from dotenv import load_dotenv
 from flask import Flask, request, app
 
-from bunnies import get_bunny_url
-from image_processing import convert_image
+from app.bunnies import get_bunny_url
+from app.image_processing import convert_image
 
 load_dotenv()
 app = Flask(__name__)
