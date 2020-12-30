@@ -1,13 +1,14 @@
+import adafruit_imageload.bmp
+import adafruit_requests
 import alarm
+import analogio
 import board
 import digitalio
 import displayio
-import wifi
 import socketpool
 import ssl
-import adafruit_requests
-import adafruit_imageload.bmp
 import time
+import wifi
 
 from alarm.time import TimeAlarm
 from io import BytesIO
@@ -24,18 +25,28 @@ speaker_enable = digitalio.DigitalInOut(board.SPEAKER_ENABLE)
 speaker_enable.direction = digitalio.Direction.OUTPUT
 speaker_enable.value = False
 
+battery = analogio.AnalogIn(board.BATTERY)
+battery_voltage = (battery.value / 65535.0) * 3.3 * 2
+
+print('battery voltage is', battery_voltage)
+
 wifi.radio.connect(config['wifi_ssid'], config['wifi_key'])
 pool = socketpool.SocketPool(wifi.radio)
 requests = adafruit_requests.Session(pool, ssl.create_default_context())
 
 print('connected to wifi')
 
-response = requests.get(config['endpoint'])
-
-print('downloaded bunny')
-
+response = requests.get(
+	config['endpoint'],
+	headers={
+		'X-Device-Secret': config['secret'],
+		'X-Battery-Voltage': str(battery_voltage),
+	},
+)
 bunny_bytes = response.content
 bunny_io = BytesIO(bunny_bytes)
+
+print('downloaded bunny')
 
 group = displayio.Group()
 bitmap, _ = adafruit_imageload.bmp.load(bunny_io, bitmap=displayio.Bitmap)
